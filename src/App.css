@@ -1,0 +1,17 @@
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.app {
+  width: 100%;
+  min-height: 100vh;
+  background: #050509;
+}
+
+.burst-container {
+  width: 100%;
+  height: 600px;
+  position: relative;
+  overflow: hidden;
+}
