@@ -10,7 +10,7 @@ function App() {
     paused: false,
     offset: { x: 0, y: 0 },
     hoverDampness: 0.25,
-    rayCount: 24,
+    rayCount: 18,
     mixBlendMode: 'lighten',
     colors: ['#ff007a', '#4d3dff', '#ffffff'],
   }
