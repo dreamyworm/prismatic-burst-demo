@@ -27,9 +27,7 @@
 }
 
 .burst-layer--glow {
-  filter: blur(14px);
-  opacity: 0.82;
-  transform: scale(1.02);
+  will-change: filter, opacity, transform;
 }
 
 .burst-layer--core {
