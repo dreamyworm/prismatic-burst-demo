@@ -31,6 +31,7 @@ uniform vec2  uOffset;
 uniform sampler2D uGradient;
 uniform float uNoiseAmount;
 uniform int   uRayCount;
+uniform float uRayWidth;
 
 float hash21(vec2 p){
     p = floor(p);
@@ -138,10 +139,13 @@ void main(){
         Pb.xz = rot2(Pb.xz, a1);
         Pb.xy = rot2(Pb.xy, a2);
 
+        float raySignal = sin(Pb.x + cos(Pb.y) * cos(Pb.z)) *
+                          sin(Pb.z + sin(Pb.y) * cos(Pb.x + t));
+        float width = clamp(uRayWidth, 0.05, 1.25);
         float rayPattern = smoothstep(
-            0.5, 0.7,
-            sin(Pb.x + cos(Pb.y) * cos(Pb.z)) *
-            sin(Pb.z + sin(Pb.y) * cos(Pb.x + t))
+            1.0 - width,
+            1.0 - width * 0.6,
+            raySignal
         );
 
         if (uRayCount > 0) {
@@ -210,6 +214,7 @@ const PrismaticBurst = ({
   offset = { x: 0, y: 0 },
   hoverDampness = 0,
   rayCount,
+  rayWidth = 0.5,
   mixBlendMode = 'lighten'
 }) => {
   const containerRef = useRef(null);
@@ -282,7 +287,8 @@ const PrismaticBurst = ({
         uOffset: { value: [0, 0] },
         uGradient: { value: gradientTex },
         uNoiseAmount: { value: 0.8 },
-        uRayCount: { value: 0 }
+        uRayCount: { value: 0 },
+        uRayWidth: { value: 0.5 }
       }
     });
 
@@ -377,17 +383,17 @@ const PrismaticBurst = ({
       }
       try {
         meshRef.current?.remove?.();
-      } catch (e) {
+      } catch {
         /* ignore dispose errors */
       }
       try {
         triRef.current?.remove?.();
-      } catch (e) {
+      } catch {
         /* ignore dispose errors */
       }
       try {
         programRef.current?.remove?.();
-      } catch (e) {
+      } catch {
         /* ignore dispose errors */
       }
       try {
@@ -395,7 +401,7 @@ const PrismaticBurst = ({
         if (glCtx && gradTexRef.current?.texture) {
           glCtx.deleteTexture(gradTexRef.current.texture);
         }
-      } catch (e) {
+      } catch {
         /* ignore texture delete errors */
       }
       programRef.current = null;
@@ -411,6 +417,8 @@ const PrismaticBurst = ({
     const canvas = rendererRef.current?.gl?.canvas;
 
     if (canvas) {
+      // OGL owns the canvas; updating its presentation is intentional here.
+      // eslint-disable-next-line react-hooks/immutability
       canvas.style.mixBlendMode = mixBlendMode && mixBlendMode !== 'none' ? mixBlendMode : '';
     }
   }, [mixBlendMode]);
@@ -437,6 +445,7 @@ const PrismaticBurst = ({
     const oy = toPx(offset?.y);
     program.uniforms.uOffset.value = [ox, oy];
     program.uniforms.uRayCount.value = Math.max(0, Math.floor(rayCount ?? 0));
+    program.uniforms.uRayWidth.value = Math.max(0.05, Math.min(1.25, rayWidth ?? 0.5));
 
     let count = 0;
     if (Array.isArray(colors) && colors.length > 0) {
@@ -463,11 +472,9 @@ const PrismaticBurst = ({
       gradTex.format = gl.RGBA;
       gradTex.type = gl.UNSIGNED_BYTE;
       gradTex.needsUpdate = true;
-    } else {
-      count = 0;
     }
     program.uniforms.uColorCount.value = count;
-  }, [intensity, speed, animationType, colors, distort, offset, rayCount]);
+  }, [intensity, speed, animationType, colors, distort, offset, rayCount, rayWidth]);
 
   return <div className="prismatic-burst-container" ref={containerRef} />;
 };
