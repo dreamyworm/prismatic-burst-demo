@@ -5,7 +5,7 @@ import './App.css'
 function App() {
   const [rayWidth, setRayWidth] = useState(0.5)
   const [rayCount, setRayCount] = useState(18)
-  const [glowIntensity, setGlowIntensity] = useState(1.35)
+  const [glowStrength, setGlowStrength] = useState(1)
   const [blurStrength, setBlurStrength] = useState(0)
   const [colors, setColors] = useState(['#6600ff', '#383cec', '#6fa9ff'])
 
@@ -32,8 +32,15 @@ function App() {
           transform: `scale(${1 + blurStrength * 0.003})`,
         }}
       >
-        <div className="burst-layer burst-layer--glow">
-          <PrismaticBurst {...burstProps} intensity={glowIntensity} />
+        <div
+          className="burst-layer burst-layer--glow"
+          style={{
+            opacity: Math.min(glowStrength * 0.82, 1),
+            filter: `blur(${8 + glowStrength * 6}px) brightness(${0.6 + glowStrength * 0.4})`,
+            transform: `scale(${1.01 + glowStrength * 0.01})`,
+          }}
+        >
+          <PrismaticBurst {...burstProps} intensity={1.35 * glowStrength} />
         </div>
         <div className="burst-layer burst-layer--core">
           <PrismaticBurst {...burstProps} />
@@ -75,16 +82,16 @@ function App() {
         <section className="burst-control">
           <div className="burst-control__header">
             <label htmlFor="glow-intensity">光晕强度</label>
-            <output htmlFor="glow-intensity">{glowIntensity.toFixed(2)}</output>
+            <output htmlFor="glow-intensity">{glowStrength.toFixed(2)}</output>
           </div>
           <input
             id="glow-intensity"
             type="range"
             min="0"
-            max="3"
+            max="2"
             step="0.05"
-            value={glowIntensity}
-            onChange={(event) => setGlowIntensity(Number(event.target.value))}
+            value={glowStrength}
+            onChange={(event) => setGlowStrength(Number(event.target.value))}
           />
         </section>
 
