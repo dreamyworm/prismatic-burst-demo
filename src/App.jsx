@@ -8,6 +8,7 @@ function App() {
   const [glowStrength, setGlowStrength] = useState(1)
   const [blurStrength, setBlurStrength] = useState(0)
   const [colors, setColors] = useState(['#6600ff', '#383cec', '#6fa9ff'])
+  const glowPower = glowStrength * glowStrength
 
   const burstProps = {
     animationType: 'rotate3d',
@@ -35,12 +36,12 @@ function App() {
         <div
           className="burst-layer burst-layer--glow"
           style={{
-            opacity: Math.min(glowStrength * 0.82, 1),
-            filter: `blur(${8 + glowStrength * 6}px) brightness(${0.6 + glowStrength * 0.4})`,
-            transform: `scale(${1.01 + glowStrength * 0.01})`,
+            opacity: Math.min(glowStrength * 0.72, 1),
+            filter: `blur(${6 + glowPower * 10}px) brightness(${0.7 + glowPower * 0.9}) saturate(${1 + glowPower * 0.35})`,
+            transform: `scale(${1.01 + glowPower * 0.015})`,
           }}
         >
-          <PrismaticBurst {...burstProps} intensity={1.35 * glowStrength} />
+          <PrismaticBurst {...burstProps} intensity={1.5 + glowPower * 2.5} />
         </div>
         <div className="burst-layer burst-layer--core">
           <PrismaticBurst {...burstProps} />
