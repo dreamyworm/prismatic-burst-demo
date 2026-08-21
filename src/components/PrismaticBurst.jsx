@@ -176,7 +176,11 @@ void main(){
     col *= edgeFade(frag, uResolution, uOffset);
     col *= uIntensity;
 
-    fragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
+    float alpha = clamp(max(max(col.r, col.g), col.b), 0.0, 1.0);
+    vec3 straightColor = alpha > 1e-5
+        ? clamp(col / alpha, 0.0, 1.0)
+        : vec3(0.0);
+    fragColor = vec4(straightColor, alpha);
 }`;
 
 const hexToRgb01 = hex => {
@@ -243,12 +247,14 @@ const PrismaticBurst = ({
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const renderer = new Renderer({
       dpr,
-      alpha: false,
+      alpha: true,
+      premultipliedAlpha: false,
       antialias: false
     });
     rendererRef.current = renderer;
 
     const gl = renderer.gl;
+    gl.clearColor(0, 0, 0, 0);
     gl.canvas.style.position = 'absolute';
     gl.canvas.style.inset = '0';
     gl.canvas.style.width = '100%';
@@ -274,6 +280,7 @@ const PrismaticBurst = ({
     const program = new Program(gl, {
       vertex: vertexShader,
       fragment: fragmentShader,
+      transparent: true,
       uniforms: {
         uResolution: { value: [1, 1] },
         uTime: { value: 0 },
