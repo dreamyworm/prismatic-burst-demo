@@ -7,7 +7,7 @@ function App() {
   const [rayCount, setRayCount] = useState(18)
   const [glowIntensity, setGlowIntensity] = useState(1.35)
   const [blurStrength, setBlurStrength] = useState(0)
-  const [colors, setColors] = useState(['#ff007a', '#4d3dff', '#ffffff'])
+  const [colors, setColors] = useState(['#6600ff', '#383cec', '#6fa9ff'])
 
   const burstProps = {
     animationType: 'rotate3d',
