@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   base: '/prismatic-burst-demo/',
+  base: '/prismatic-burst-demo/',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
