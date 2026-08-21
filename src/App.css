@@ -27,6 +27,7 @@
 }
 
 .burst-layer--glow {
+  mix-blend-mode: screen;
   will-change: filter, opacity, transform;
 }
 
