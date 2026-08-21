@@ -12,6 +12,13 @@
   background: #050509;
 }
 
+.burst-visual {
+  position: absolute;
+  inset: 0;
+  transform-origin: center;
+  will-change: filter, transform;
+}
+
 .burst-layer {
   position: absolute;
   inset: 0;
