@@ -452,16 +452,26 @@ const PrismaticBurst = ({
       const gl = renderer.gl;
       const capped = colors.slice(0, 64);
       count = capped.length;
-      const data = new Uint8Array(count * 4);
-      for (let i = 0; i < count; i++) {
-        const [r, g, b] = hexToRgb01(capped[i]);
-        data[i * 4 + 0] = Math.round(r * 255);
-        data[i * 4 + 1] = Math.round(g * 255);
-        data[i * 4 + 2] = Math.round(b * 255);
+      const gradientWidth = 256;
+      const stops = capped.map(hexToRgb01);
+      const data = new Uint8Array(gradientWidth * 4);
+
+      for (let i = 0; i < gradientWidth; i++) {
+        const position = i / (gradientWidth - 1);
+        const scaled = position * Math.max(stops.length - 1, 1);
+        const stopIndex = Math.min(Math.floor(scaled), stops.length - 1);
+        const nextIndex = Math.min(stopIndex + 1, stops.length - 1);
+        const local = scaled - stopIndex;
+        const blend = local * local * (3 - 2 * local);
+
+        for (let channel = 0; channel < 3; channel++) {
+          const value = stops[stopIndex][channel] * (1 - blend) + stops[nextIndex][channel] * blend;
+          data[i * 4 + channel] = Math.round(value * 255);
+        }
         data[i * 4 + 3] = 255;
       }
       gradTex.image = data;
-      gradTex.width = count;
+      gradTex.width = gradientWidth;
       gradTex.height = 1;
       gradTex.minFilter = gl.LINEAR;
       gradTex.magFilter = gl.LINEAR;
