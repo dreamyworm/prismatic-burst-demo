@@ -6,6 +6,7 @@ function App() {
   const [rayWidth, setRayWidth] = useState(0.5)
   const [rayCount, setRayCount] = useState(18)
   const [glowIntensity, setGlowIntensity] = useState(1.35)
+  const [blurStrength, setBlurStrength] = useState(0)
   const [colors, setColors] = useState(['#ff007a', '#4d3dff', '#ffffff'])
 
   const burstProps = {
@@ -24,11 +25,19 @@ function App() {
 
   return (
     <main className="app">
-      <div className="burst-layer burst-layer--glow">
-        <PrismaticBurst {...burstProps} intensity={glowIntensity} />
-      </div>
-      <div className="burst-layer burst-layer--core">
-        <PrismaticBurst {...burstProps} />
+      <div
+        className="burst-visual"
+        style={{
+          filter: `blur(${blurStrength}px)`,
+          transform: `scale(${1 + blurStrength * 0.003})`,
+        }}
+      >
+        <div className="burst-layer burst-layer--glow">
+          <PrismaticBurst {...burstProps} intensity={glowIntensity} />
+        </div>
+        <div className="burst-layer burst-layer--core">
+          <PrismaticBurst {...burstProps} />
+        </div>
       </div>
       <div className="burst-controls">
         <section className="burst-control">
@@ -76,6 +85,22 @@ function App() {
             step="0.05"
             value={glowIntensity}
             onChange={(event) => setGlowIntensity(Number(event.target.value))}
+          />
+        </section>
+
+        <section className="burst-control">
+          <div className="burst-control__header">
+            <label htmlFor="blur-strength">画面模糊</label>
+            <output htmlFor="blur-strength">{blurStrength.toFixed(1)} px</output>
+          </div>
+          <input
+            id="blur-strength"
+            type="range"
+            min="0"
+            max="20"
+            step="0.5"
+            value={blurStrength}
+            onChange={(event) => setBlurStrength(Number(event.target.value))}
           />
         </section>
 
